@@ -12,6 +12,7 @@ const navbarSource = readFileSync(
   new URL("../src/features/navbar/NavBar.tsx", import.meta.url),
   "utf8",
 );
+const appSource = readFileSync(new URL("../src/App.tsx", import.meta.url), "utf8");
 const contentSource = readFileSync(
   new URL("../src/features/content/Content.tsx", import.meta.url),
   "utf8",
@@ -88,6 +89,16 @@ test("toolbar has mobile responsive wrapping rules", () => {
   assert.match(stylesSource, /@media\s*\(max-width:\s*1080px\)\s*\{[\s\S]*\.site-header-main\s*\{[\s\S]*flex-wrap:\s*wrap;/);
   assert.match(stylesSource, /@media\s*\(max-width:\s*760px\)\s*\{[\s\S]*\.topbar-actions\s*\{[\s\S]*flex:\s*1 1 100%;/);
   assert.match(stylesSource, /@media\s*\(max-width:\s*480px\)\s*\{[\s\S]*\.topbar-tuners-stack\s*\{[\s\S]*flex:\s*1 1 calc\(100% - 4\.2rem\);/);
+});
+
+test("toolbar header can be hidden and restored", () => {
+  assert.match(appSource, /isToolbarHidden/);
+  assert.match(appSource, /data-testid="toolbar-hide"/);
+  assert.match(appSource, /data-testid="toolbar-show"/);
+  assert.match(appSource, /hidden=\{isToolbarHidden\}/);
+  assert.match(stylesSource, /\.site-header\[hidden\]\s*\{[\s\S]*display:\s*none;/);
+  assert.match(stylesSource, /\.toolbar-restore-button\s*\{[\s\S]*position:\s*fixed;/);
+  assert.match(stylesSource, /\.is-toolbar-hidden \.content\s*\{[\s\S]*min-height:\s*calc\(100dvh - 0\.5rem\);/);
 });
 
 test("toolbar buttons call their assigned functions", async () => {

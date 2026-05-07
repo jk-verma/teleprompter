@@ -72,6 +72,55 @@ a {
   box-shadow: 0 2px 0 rgba(255, 255, 255, 0.02) inset;
 }
 
+.site-header[hidden] {
+  display: none;
+}
+
+.toolbar-visibility-button,
+.toolbar-restore-button {
+  border: 1px solid rgba(137, 166, 202, 0.26);
+  border-radius: 999px;
+  background: rgba(10, 22, 38, 0.96);
+  color: #dfe7f7;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.28rem;
+  appearance: none;
+}
+
+.toolbar-visibility-button:hover,
+.toolbar-restore-button:hover {
+  color: #ffffff;
+  border-color: rgba(127, 176, 255, 0.58);
+  background: rgba(46, 105, 230, 0.18);
+}
+
+.toolbar-visibility-button {
+  flex: 0 0 auto;
+  width: 2rem;
+  height: 2rem;
+  margin-left: 0.15rem;
+  padding: 0;
+}
+
+.toolbar-restore-button {
+  position: fixed;
+  top: 0.42rem;
+  right: 0.52rem;
+  z-index: 100;
+  min-height: 2rem;
+  padding: 0 0.72rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  box-shadow: 0 0.7rem 1.8rem rgba(0, 0, 0, 0.32);
+}
+
+.toolbar-restore-button .icon {
+  color: #7fb0ff;
+}
+
 .site-header-main {
   display: flex;
   align-items: center;
@@ -459,6 +508,18 @@ a {
   min-height: clamp(24rem, calc(100dvh - 7.5rem), 100dvh);
 }
 
+.is-toolbar-hidden .teleprompter-page {
+  padding-top: 0.12rem;
+}
+
+.is-toolbar-hidden .teleprompter-workspace {
+  margin-top: 0.12rem;
+}
+
+.is-toolbar-hidden .content {
+  min-height: calc(100dvh - 0.5rem);
+}
+
 .teleprompter-display {
   overflow: auto;
   padding: 0.9rem 1.15rem 1.25rem;
@@ -607,6 +668,10 @@ a {
     margin-left: auto;
   }
 
+  .toolbar-visibility-button {
+    margin-left: 0;
+  }
+
   .teleprompter-workspace {
     min-height: 0;
   }
@@ -658,6 +723,19 @@ a {
     padding: 0 0.52rem;
     font-size: 0.7rem;
     gap: 0.22rem;
+  }
+
+  .toolbar-visibility-button {
+    width: 1.78rem;
+    height: 1.78rem;
+  }
+
+  .toolbar-restore-button {
+    top: 0.3rem;
+    right: 0.35rem;
+    min-height: 1.82rem;
+    padding: 0 0.58rem;
+    font-size: 0.72rem;
   }
 
   .topbar-inline-controls {
@@ -751,6 +829,15 @@ a {
 
   .support-link .icon {
     font-size: 0.82rem;
+  }
+
+  .toolbar-restore-button {
+    width: 2rem;
+    padding: 0;
+  }
+
+  .toolbar-restore-button span:last-child {
+    display: none;
   }
 
   .topbar-right-controls {
