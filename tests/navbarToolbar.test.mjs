@@ -17,6 +17,10 @@ const contentSource = readFileSync(
   new URL("../src/features/content/Content.tsx", import.meta.url),
   "utf8",
 );
+const teleprompterPageSource = readFileSync(
+  new URL("../src/features/teleprompter/TeleprompterPage.tsx", import.meta.url),
+  "utf8",
+);
 const stylesSource = readFileSync(
   new URL("../src/index.scss", import.meta.url),
   "utf8",
@@ -59,7 +63,8 @@ test("return to beginning invalidates pending playback frames", () => {
   assert.match(contentSource, /range\.collapse\(true\);/);
   assert.match(contentSource, /const resetToBeginning = \(\) =>/);
   assert.match(contentSource, /resetVisualPosition\(true\);/);
-  assert.match(contentSource, /requestAnimationFrame\(\(\) => \{[\s\S]*requestAnimationFrame\(\(\) => \{/);
+  assert.doesNotMatch(contentSource, /requestAnimationFrame\(\(\) => \{[\s\S]*resetVisualPosition\(true\);/);
+  assert.match(teleprompterPageSource, /key=\{resetSignal\}/);
 });
 
 test("alignment popover buttons are wired to alignment commands", () => {

@@ -175,16 +175,6 @@ export const Content = forwardRef<ContentHandle, ContentProps>(function Content(
     stopSpeech();
     resetVisualPosition(true);
     scrollEverythingToBeginning();
-
-    requestAnimationFrame(() => {
-      resetVisualPosition(true);
-      scrollEverythingToBeginning();
-
-      requestAnimationFrame(() => {
-        resetVisualPosition(true);
-        scrollEverythingToBeginning();
-      });
-    });
   };
 
   const getPlainEditorHtml = () => {
