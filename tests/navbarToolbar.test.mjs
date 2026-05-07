@@ -1,0 +1,207 @@
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { test } from "node:test";
+import { fileURLToPath } from "node:url";
+import react from "@vitejs/plugin-react";
+import React from "react";
+import { createRoot } from "react-dom/client";
+import { createServer } from "vite";
+import { JSDOM } from "jsdom";
+
+const navbarSource = readFileSync(
+  new URL("../src/features/navbar/NavBar.tsx", import.meta.url),
+  "utf8",
+);
+const contentSource = readFileSync(
+  new URL("../src/features/content/Content.tsx", import.meta.url),
+  "utf8",
+);
+const stylesSource = readFileSync(
+  new URL("../src/index.scss", import.meta.url),
+  "utf8",
+);
+const repoRoot = fileURLToPath(new URL("..", import.meta.url));
+
+test("toolbar buttons are wired to active handlers", () => {
+  const requiredHandlers = [
+    "onClick={onOpenFile}",
+    "onClick={onSaveFile}",
+    "onClick={onResetPosition}",
+    "onClick={onToggleFullscreen}",
+    "onClick={onToggleInstructions}",
+    "onClick={onTogglePlayback}",
+    "onClick={onToggleSpeech}",
+  ];
+
+  for (const handler of requiredHandlers) {
+    assert.match(navbarSource, new RegExp(handler.replace(/[{}]/g, "\\$&")));
+  }
+});
+
+test("alignment popover buttons are wired to alignment commands", () => {
+  const requiredCommands = [
+    "justifyLeft",
+    "justifyCenter",
+    "justifyRight",
+    "justifyFull",
+  ];
+
+  assert.match(
+    navbarSource,
+    /onClick=\{\(\) => applyAlignment\(option.command\)\}/,
+  );
+
+  for (const command of requiredCommands) {
+    assert.match(navbarSource, new RegExp(command));
+  }
+});
+
+test("microphone button is restored and wired to speech processing", () => {
+  assert.match(navbarSource, /fa-microphone/);
+  assert.match(navbarSource, /data-testid="toolbar-mic"/);
+  assert.doesNotMatch(navbarSource, /disabled\s+title=/);
+});
+
+test("text color control uses safe in-app palette buttons", () => {
+  assert.match(navbarSource, /TEXT_COLOR_OPTIONS/);
+  assert.match(navbarSource, /data-testid="toolbar-font-color"/);
+  assert.match(navbarSource, /data-testid=\{`toolbar-text-color-/);
+  assert.match(navbarSource, /onPrepareTextColor\(\);/);
+  assert.doesNotMatch(
+    navbarSource,
+    /data-testid="toolbar-font-color"[\s\S]{0,120}type="color"/,
+  );
+});
+
+test("margin slider applies symmetrical in-bounds editor margins", () => {
+  assert.match(navbarSource, /const MAX_MARGIN = 560/);
+  assert.match(navbarSource, /\(settings\.margin \/ MAX_MARGIN\) \* 200/);
+  assert.match(navbarSource, /max=\{MAX_MARGIN\}/);
+  assert.match(contentSource, /paddingLeft:\s*`\$\{settings\.margin\}px`/);
+  assert.match(contentSource, /paddingRight:\s*`\$\{settings\.margin\}px`/);
+  assert.match(stylesSource, /\.teleprompter-display\s*\{[\s\S]*box-sizing:\s*border-box;/);
+  assert.match(stylesSource, /\.teleprompter-editor\s*\{[\s\S]*max-width:\s*100%;/);
+});
+
+test("toolbar buttons call their assigned functions", async () => {
+  const vite = await createServer({
+    configFile: false,
+    root: repoRoot,
+    plugins: [react()],
+    optimizeDeps: { entries: [] },
+    server: { middlewareMode: true },
+  });
+
+  const dom = new JSDOM('<div id="root"></div>', {
+    url: "https://example.test/",
+    pretendToBeVisual: true,
+  });
+
+  const previousWindow = globalThis.window;
+  const previousDocument = globalThis.document;
+  const previousNode = globalThis.Node;
+  const previousHTMLElement = globalThis.HTMLElement;
+  const previousPointerEvent = globalThis.PointerEvent;
+
+  globalThis.window = dom.window;
+  globalThis.document = dom.window.document;
+  globalThis.Node = dom.window.Node;
+  globalThis.HTMLElement = dom.window.HTMLElement;
+  globalThis.PointerEvent = dom.window.PointerEvent;
+
+  try {
+    const { NavBar } = await vite.ssrLoadModule(
+      "/src/features/navbar/NavBar.tsx",
+    );
+    const calls = [];
+    const rootElement = dom.window.document.getElementById("root");
+    const root = createRoot(rootElement);
+
+    root.render(
+      React.createElement(NavBar, {
+        status: "stopped",
+        settings: {
+          fontSize: 60,
+          speed: 35,
+          margin: 16,
+          fontColor: "#ffffff",
+          backgroundColor: "#000000",
+        },
+        onSetFontSize: (value) => calls.push(["fontSize", value]),
+        onSetSpeed: (value) => calls.push(["speed", value]),
+        onSetMargin: (value) => calls.push(["margin", value]),
+        onSetFontColor: (value) => calls.push(["fontColor", value]),
+        onPrepareTextColor: () => calls.push(["prepareTextColor"]),
+        onSetBackgroundColor: (value) => calls.push(["backgroundColor", value]),
+        onToggleFullscreen: () => calls.push(["fullscreen"]),
+        isFullscreen: false,
+        isInstructionsOpen: false,
+        onToggleInstructions: () => calls.push(["instructions"]),
+        onTogglePlayback: () => calls.push(["playback"]),
+        isMicActive: false,
+        onToggleSpeech: () => calls.push(["speech"]),
+        onOpenFile: () => calls.push(["open"]),
+        onSaveFile: () => calls.push(["save"]),
+        onResetPosition: () => calls.push(["reset"]),
+        onApplyAlignment: (value) => calls.push(["align", value]),
+      }),
+    );
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    for (const id of [
+      "toolbar-open",
+      "toolbar-save",
+      "toolbar-reset",
+      "toolbar-fullscreen",
+      "toolbar-instructions",
+      "toolbar-mic",
+      "toolbar-play",
+    ]) {
+      dom.window.document.querySelector(`[data-testid="${id}"]`).click();
+    }
+
+    dom.window.document.querySelector('[data-testid="toolbar-align"]').click();
+    dom.window.document
+      .querySelector('[data-testid="toolbar-justifyCenter"]')
+      .click();
+    const textColorButton = dom.window.document.querySelector(
+      '[data-testid="toolbar-font-color"]',
+    );
+    textColorButton.dispatchEvent(
+      new dom.window.MouseEvent("mousedown", { bubbles: true }),
+    );
+    textColorButton.click();
+
+    const redSwatch = dom.window.document.querySelector(
+      '[data-testid="toolbar-text-color-ff4040"]',
+    );
+    redSwatch.dispatchEvent(
+      new dom.window.MouseEvent("mousedown", { bubbles: true }),
+    );
+    redSwatch.click();
+
+    assert.deepEqual(calls, [
+      ["open"],
+      ["save"],
+      ["reset"],
+      ["fullscreen"],
+      ["instructions"],
+      ["speech"],
+      ["playback"],
+      ["align", "justifyCenter"],
+      ["prepareTextColor"],
+      ["prepareTextColor"],
+      ["fontColor", "#ff4040"],
+    ]);
+
+    root.unmount();
+  } finally {
+    await vite.close();
+    globalThis.window = previousWindow;
+    globalThis.document = previousDocument;
+    globalThis.Node = previousNode;
+    globalThis.HTMLElement = previousHTMLElement;
+    globalThis.PointerEvent = previousPointerEvent;
+  }
+});

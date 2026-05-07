@@ -1,0 +1,54 @@
+{
+  "name": "voice-activated-teleprompter",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "homepage": "https://jk-verma.github.io/voice-activated-teleprompter/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jk-verma/voice-activated-teleprompter.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jk-verma/voice-activated-teleprompter/issues"
+  },
+  "scripts": {
+    "dev": "C:\\Progra~1\\nodejs\\node.exe ./node_modules/vite/bin/vite.js",
+    "start": "C:\\Progra~1\\nodejs\\node.exe ./node_modules/vite/bin/vite.js",
+    "build": "C:\\Progra~1\\nodejs\\node.exe ./node_modules/typescript/bin/tsc && C:\\Progra~1\\nodejs\\node.exe ./node_modules/vite/bin/vite.js build && C:\\Progra~1\\nodejs\\node.exe ./scripts/finalize-dist.mjs",
+    "preview": "C:\\Progra~1\\nodejs\\node.exe ./node_modules/vite/bin/vite.js preview",
+    "test": "C:\\Progra~1\\nodejs\\node.exe --test tests/index.test.mjs",
+    "format": "prettier --write .",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "type-check": "C:\\Progra~1\\nodejs\\node.exe ./node_modules/typescript/bin/tsc --noEmit"
+  },
+  "dependencies": {
+    "@reduxjs/toolkit": "^2.9.0",
+    "bulma-extensions": "^6.2.7",
+    "bulma-slider": "^2.0.5",
+    "html-escaper": "^3.0.3",
+    "i": "^0.3.7",
+    "npm": "^11.6.1",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "react-redux": "^9.2.0"
+  },
+  "devDependencies": {
+    "@types/dom-speech-recognition": "^0.0.6",
+    "@types/html-escaper": "^3.0.4",
+    "@types/node": "^24.5.2",
+    "@types/react": "^19.1.15",
+    "@types/react-dom": "^19.1.9",
+    "@vitejs/plugin-react": "^5.0.4",
+    "bulma": "^0.9.4",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-config-react-app": "^7.0.1",
+    "eslint-plugin-prettier": "^5.2.6",
+    "jsdom": "^27.0.0",
+    "prettier": "^3.6.2",
+    "sass": "^1.93.2",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.7"
+  }
+}
