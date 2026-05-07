@@ -273,6 +273,7 @@ const App = () => {
             <span className="icon is-small" aria-hidden="true">
               <i className="fa-solid fa-chevron-up" />
             </span>
+            <span>Hide Toolbar</span>
           </button>
 
           <a

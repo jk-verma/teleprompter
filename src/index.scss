@@ -99,10 +99,18 @@ a {
 
 .toolbar-visibility-button {
   flex: 0 0 auto;
-  width: 2rem;
-  height: 2rem;
+  min-width: 7.35rem;
+  min-height: 2rem;
   margin-left: 0.15rem;
-  padding: 0;
+  padding: 0 0.7rem;
+  font-size: 0.76rem;
+  font-weight: 700;
+  white-space: nowrap;
+  box-shadow: inset 0 0 0 1px rgba(127, 176, 255, 0.18);
+}
+
+.toolbar-visibility-button .icon {
+  color: #7fb0ff;
 }
 
 .toolbar-restore-button {
@@ -670,6 +678,11 @@ a {
 
   .toolbar-visibility-button {
     margin-left: 0;
+    order: 1;
+  }
+
+  .support-link {
+    order: 2;
   }
 
   .teleprompter-workspace {
@@ -726,8 +739,10 @@ a {
   }
 
   .toolbar-visibility-button {
-    width: 1.78rem;
-    height: 1.78rem;
+    min-width: 6.6rem;
+    min-height: 1.78rem;
+    padding: 0 0.5rem;
+    font-size: 0.68rem;
   }
 
   .toolbar-restore-button {
@@ -837,6 +852,16 @@ a {
   }
 
   .toolbar-restore-button span:last-child {
+    display: none;
+  }
+
+  .toolbar-visibility-button {
+    min-width: 1.9rem;
+    width: 1.9rem;
+    padding: 0;
+  }
+
+  .toolbar-visibility-button span:last-child {
     display: none;
   }
 
