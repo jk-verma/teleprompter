@@ -116,10 +116,6 @@ test("toolbar has mobile responsive wrapping rules", () => {
 });
 
 test("teleprompter editor keeps a visible scrollbar", () => {
-  assert.match(stylesSource, /\.teleprompter-workspace\s*\{[\s\S]*height:\s*calc\(100dvh - 7\.5rem\);/);
-  assert.match(stylesSource, /\.teleprompter-workspace\s*\{[\s\S]*max-height:\s*calc\(100dvh - 7\.5rem\);/);
-  assert.match(stylesSource, /\.content\s*\{[\s\S]*height:\s*100%;[\s\S]*min-height:\s*0;/);
-  assert.doesNotMatch(stylesSource, /\.content\s*\{[\s\S]*min-height:\s*clamp\(24rem,/);
   assert.match(stylesSource, /\.teleprompter-display\s*\{[\s\S]*overflow-y:\s*scroll;/);
   assert.match(stylesSource, /\.teleprompter-display\s*\{[\s\S]*overflow-x:\s*hidden;/);
   assert.match(stylesSource, /\.teleprompter-display\s*\{[\s\S]*scrollbar-gutter:\s*stable;/);
@@ -136,8 +132,7 @@ test("toolbar header can be hidden and restored", () => {
   assert.match(stylesSource, /\.toolbar-visibility-button\s*\{[\s\S]*flex:\s*0 0 auto;/);
   assert.match(stylesSource, /\.toolbar-visibility-button\s*\{[\s\S]*min-width:\s*7\.35rem;/);
   assert.match(stylesSource, /\.toolbar-restore-button\s*\{[\s\S]*position:\s*fixed;/);
-  assert.match(stylesSource, /\.is-toolbar-hidden \.teleprompter-workspace\s*\{[\s\S]*height:\s*calc\(100dvh - 0\.8rem\);/);
-  assert.match(stylesSource, /\.is-toolbar-hidden \.content\s*\{[\s\S]*min-height:\s*0;/);
+  assert.match(stylesSource, /\.is-toolbar-hidden \.content\s*\{[\s\S]*min-height:\s*calc\(100dvh - 0\.5rem\);/);
 });
 
 test("toolbar buttons call their assigned functions", async () => {

@@ -492,10 +492,9 @@ a {
 }
 
 .teleprompter-workspace {
-  flex: 0 0 auto;
-  min-height: 14rem;
-  height: calc(100dvh - 7.5rem);
-  max-height: calc(100dvh - 7.5rem);
+  flex: 1;
+  min-height: 0;
+  height: auto;
   margin: 0 0.22rem 0.22rem;
   border: 1px solid rgba(125, 155, 193, 0.22);
   border-radius: 0.35rem;
@@ -507,7 +506,6 @@ a {
 .content {
   width: 100%;
   height: 100%;
-  min-height: 0;
   box-sizing: border-box;
   border: none;
   outline: none;
@@ -515,6 +513,7 @@ a {
   background: inherit;
   line-height: 1.55;
   font-weight: 400;
+  min-height: clamp(24rem, calc(100dvh - 7.5rem), 100dvh);
 }
 
 .is-toolbar-hidden .teleprompter-page {
@@ -522,13 +521,11 @@ a {
 }
 
 .is-toolbar-hidden .teleprompter-workspace {
-  height: calc(100dvh - 0.8rem);
-  max-height: calc(100dvh - 0.8rem);
   margin-top: 0.12rem;
 }
 
 .is-toolbar-hidden .content {
-  min-height: 0;
+  min-height: calc(100dvh - 0.5rem);
 }
 
 .teleprompter-display {
@@ -711,12 +708,11 @@ a {
   }
 
   .teleprompter-workspace {
-    height: calc(100dvh - 10.5rem);
-    max-height: calc(100dvh - 10.5rem);
+    min-height: 0;
   }
 
   .content {
-    min-height: 0;
+    min-height: clamp(24rem, calc(100dvh - 10.5rem), 100dvh);
   }
 }
 
@@ -742,9 +738,7 @@ a {
 
   .teleprompter-workspace {
     margin: 0 0.12rem 0.12rem;
-    min-height: 12rem;
-    height: calc(100dvh - 11.5rem);
-    max-height: calc(100dvh - 11.5rem);
+    min-height: 0;
   }
 
   .site-brand strong {
@@ -844,7 +838,7 @@ a {
   }
 
   .content {
-    min-height: 0;
+    min-height: clamp(24rem, calc(100dvh - 11.5rem), 100dvh);
   }
 }
 
@@ -948,6 +942,6 @@ a {
 
   .content {
     line-height: 1.45;
-    min-height: 0;
+    min-height: clamp(24rem, calc(100dvh - 12rem), 100dvh);
   }
 }
