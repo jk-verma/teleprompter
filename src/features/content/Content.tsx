@@ -134,18 +134,55 @@ export const Content = forwardRef<ContentHandle, ContentProps>(function Content(
     container.scrollLeft = 0;
   };
 
+  const scrollPageToBeginning = () => {
+    const container = containerRef.current;
+    const ownerDocument = container?.ownerDocument;
+    if (!ownerDocument) {
+      return;
+    }
+
+    const scrollTargets = [
+      ownerDocument.scrollingElement,
+      ownerDocument.documentElement,
+      ownerDocument.body,
+    ];
+
+    for (const target of scrollTargets) {
+      if (!target) {
+        continue;
+      }
+
+      target.scrollTop = 0;
+      target.scrollLeft = 0;
+    }
+
+    const win = ownerDocument.defaultView;
+    if (win) {
+      try {
+        win.scrollTo(0, 0);
+      } catch {
+        // Embedded DOMs can expose scrollTo without implementing it.
+      }
+    }
+  };
+
+  const scrollEverythingToBeginning = () => {
+    scrollContainerToBeginning();
+    scrollPageToBeginning();
+  };
+
   const resetToBeginning = () => {
     stopSpeech();
     resetVisualPosition(true);
-    scrollContainerToBeginning();
+    scrollEverythingToBeginning();
 
     requestAnimationFrame(() => {
       resetVisualPosition(true);
-      scrollContainerToBeginning();
+      scrollEverythingToBeginning();
 
       requestAnimationFrame(() => {
         resetVisualPosition(true);
-        scrollContainerToBeginning();
+        scrollEverythingToBeginning();
       });
     });
   };
