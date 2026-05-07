@@ -39,6 +39,14 @@ test("toolbar buttons are wired to active handlers", () => {
   }
 });
 
+test("return to beginning invalidates pending playback frames", () => {
+  assert.match(contentSource, /const playbackRunRef = useRef\(0\)/);
+  assert.match(contentSource, /playbackRunRef\.current \+= 1;/);
+  assert.match(contentSource, /const playbackRun = \(playbackRunRef\.current \+= 1\);/);
+  assert.match(contentSource, /playbackRun !== playbackRunRef\.current/);
+  assert.match(contentSource, /editor\.style\.top = "0px";/);
+});
+
 test("alignment popover buttons are wired to alignment commands", () => {
   const requiredCommands = [
     "justifyLeft",

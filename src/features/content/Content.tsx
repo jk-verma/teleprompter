@@ -64,6 +64,7 @@ export const Content = forwardRef<ContentHandle, ContentProps>(function Content(
 ) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const animationFrameRef = useRef<number | null>(null);
+  const playbackRunRef = useRef(0);
   const frameTimeRef = useRef<number | null>(null);
   const playbackOffsetRef = useRef(0);
   const editorRef = useRef<HTMLDivElement | null>(null);
@@ -77,6 +78,8 @@ export const Content = forwardRef<ContentHandle, ContentProps>(function Content(
   const isSpeechActiveRef = useRef(false);
 
   const resetVisualPosition = () => {
+    playbackRunRef.current += 1;
+
     if (animationFrameRef.current !== null) {
       cancelAnimationFrame(animationFrameRef.current);
       animationFrameRef.current = null;
@@ -96,8 +99,8 @@ export const Content = forwardRef<ContentHandle, ContentProps>(function Content(
 
     if (editor) {
       editor.style.transform = "";
-      editor.style.top = "";
-      editor.style.position = "";
+      editor.style.top = "0px";
+      editor.style.position = "relative";
       editor.style.willChange = "";
     }
   };
@@ -533,10 +536,15 @@ export const Content = forwardRef<ContentHandle, ContentProps>(function Content(
       return;
     }
 
+    const playbackRun = (playbackRunRef.current += 1);
     playbackOffsetRef.current = Math.max(playbackOffsetRef.current, 0);
     editor.style.willChange = "top";
 
     const animate = (timestamp: number) => {
+      if (playbackRun !== playbackRunRef.current) {
+        return;
+      }
+
       const currentContainer = containerRef.current;
       const currentEditor = editorRef.current;
 
@@ -568,6 +576,7 @@ export const Content = forwardRef<ContentHandle, ContentProps>(function Content(
         cancelAnimationFrame(animationFrameRef.current);
         animationFrameRef.current = null;
       }
+      playbackRunRef.current += 1;
       frameTimeRef.current = null;
       if (editor) {
         editor.style.willChange = "";
