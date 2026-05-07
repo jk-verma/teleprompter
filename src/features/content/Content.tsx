@@ -92,30 +92,14 @@ export const Content = forwardRef<ContentHandle, ContentProps>(function Content(
     savedSelectionRangeRef.current = range.cloneRange();
   };
 
-  const scrollToStart = () => {
+  const scrollContainerToStart = () => {
     const container = containerRef.current;
-    const documentElement = container?.ownerDocument.documentElement;
-    const scrollingElement = container?.ownerDocument.scrollingElement;
-    const body = container?.ownerDocument.body;
-    const win = container?.ownerDocument.defaultView;
-
-    if (container) {
-      container.scrollTop = 0;
-      container.scrollLeft = 0;
+    if (!container) {
+      return;
     }
 
-    for (const element of [scrollingElement, documentElement, body]) {
-      if (element) {
-        element.scrollTop = 0;
-        element.scrollLeft = 0;
-      }
-    }
-
-    try {
-      win?.scrollTo?.(0, 0);
-    } catch {
-      // Some embedded browsers expose scrollTo but do not implement it.
-    }
+    container.scrollTop = 0;
+    container.scrollLeft = 0;
   };
 
   const resetVisualPosition = (shouldMoveCaret = false) => {
@@ -126,18 +110,19 @@ export const Content = forwardRef<ContentHandle, ContentProps>(function Content(
       animationFrameRef.current = null;
     }
 
+    const container = containerRef.current;
     const editor = editorRef.current;
 
     playbackOffsetRef.current = 0;
     frameTimeRef.current = null;
     savedSelectionRangeRef.current = null;
 
-    scrollToStart();
+    scrollContainerToStart();
 
     if (editor) {
       editor.style.transform = "";
-      editor.style.top = "";
-      editor.style.position = "";
+      editor.style.top = "0px";
+      editor.style.position = "relative";
       editor.style.willChange = "";
     }
 
@@ -149,15 +134,15 @@ export const Content = forwardRef<ContentHandle, ContentProps>(function Content(
   const resetToBeginning = () => {
     stopSpeech();
     resetVisualPosition(true);
-    scrollToStart();
+    scrollContainerToStart();
 
     requestAnimationFrame(() => {
       resetVisualPosition(true);
-      scrollToStart();
+      scrollContainerToStart();
 
       requestAnimationFrame(() => {
         resetVisualPosition(true);
-        scrollToStart();
+        scrollContainerToStart();
       });
     });
   };
@@ -595,6 +580,7 @@ export const Content = forwardRef<ContentHandle, ContentProps>(function Content(
 
     const playbackRun = (playbackRunRef.current += 1);
     playbackOffsetRef.current = Math.max(playbackOffsetRef.current, 0);
+    editor.style.willChange = "top";
 
     const animate = (timestamp: number) => {
       if (playbackRun !== playbackRunRef.current) {
@@ -602,8 +588,9 @@ export const Content = forwardRef<ContentHandle, ContentProps>(function Content(
       }
 
       const currentContainer = containerRef.current;
+      const currentEditor = editorRef.current;
 
-      if (!currentContainer) {
+      if (!currentContainer || !currentEditor) {
         return;
       }
 
@@ -618,6 +605,8 @@ export const Content = forwardRef<ContentHandle, ContentProps>(function Content(
       playbackOffsetRef.current += elapsedSeconds * pixelsPerSecond;
 
       currentContainer.scrollTop = playbackOffsetRef.current;
+      currentEditor.style.position = "relative";
+      currentEditor.style.top = `-${playbackOffsetRef.current}px`;
 
       animationFrameRef.current = requestAnimationFrame(animate);
     };
@@ -631,6 +620,9 @@ export const Content = forwardRef<ContentHandle, ContentProps>(function Content(
       }
       playbackRunRef.current += 1;
       frameTimeRef.current = null;
+      if (editor) {
+        editor.style.willChange = "";
+      }
     };
   }, [settings.speed, status]);
 
