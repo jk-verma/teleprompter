@@ -5,6 +5,7 @@ import {
   useRef,
   type ClipboardEvent,
   type CSSProperties,
+  type WheelEvent,
 } from "react";
 import type {
   TeleprompterStatus,
@@ -140,6 +141,18 @@ export const Content = forwardRef<ContentHandle, ContentProps>(function Content(
     }
 
     return scrollingElement ?? documentElement ?? body ?? container;
+  };
+
+  const scrollByWheelDelta = (deltaX: number, deltaY: number) => {
+    const scrollTarget = getPlaybackScrollTarget();
+    if (!scrollTarget) {
+      return false;
+    }
+
+    scrollTarget.scrollTop += deltaY;
+    scrollTarget.scrollLeft += deltaX;
+    playbackOffsetRef.current = scrollTarget.scrollTop;
+    return true;
   };
 
   const resetVisualPosition = (shouldMoveCaret = false) => {
@@ -692,6 +705,14 @@ export const Content = forwardRef<ContentHandle, ContentProps>(function Content(
     snapshotSelection();
   };
 
+  const handleWheel = (event: WheelEvent<HTMLDivElement>) => {
+    if (!scrollByWheelDelta(event.deltaX, event.deltaY)) {
+      return;
+    }
+
+    event.preventDefault();
+  };
+
   const getSelectedRange = () => {
     const editor = editorRef.current;
     const selection = editor?.ownerDocument.getSelection();
@@ -815,6 +836,7 @@ export const Content = forwardRef<ContentHandle, ContentProps>(function Content(
         className="content teleprompter-display"
         ref={containerRef}
         style={style}
+        onWheel={handleWheel}
       >
         <div
           ref={editorRef}
