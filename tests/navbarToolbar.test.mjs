@@ -115,13 +115,6 @@ test("toolbar has mobile responsive wrapping rules", () => {
   assert.match(stylesSource, /@media\s*\(max-width:\s*480px\)\s*\{[\s\S]*\.topbar-tuners-stack\s*\{[\s\S]*flex:\s*1 1 calc\(100% - 4\.2rem\);/);
 });
 
-test("teleprompter editor keeps a visible scrollbar", () => {
-  assert.match(stylesSource, /\.teleprompter-display\s*\{[\s\S]*overflow-y:\s*scroll;/);
-  assert.match(stylesSource, /\.teleprompter-display\s*\{[\s\S]*overflow-x:\s*hidden;/);
-  assert.match(stylesSource, /\.teleprompter-display\s*\{[\s\S]*scrollbar-gutter:\s*stable;/);
-  assert.match(stylesSource, /\.teleprompter-display::-webkit-scrollbar\s*\{[\s\S]*width:\s*0\.95rem;/);
-});
-
 test("toolbar header can be hidden and restored", () => {
   assert.match(appSource, /isToolbarHidden/);
   assert.match(appSource, /data-testid="toolbar-hide"/);

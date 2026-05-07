@@ -529,8 +529,7 @@ a {
 }
 
 .teleprompter-display {
-  overflow-x: hidden;
-  overflow-y: scroll;
+  overflow: auto;
   padding: 0.9rem 1.15rem 1.25rem;
   box-sizing: border-box;
   white-space: pre-wrap;
@@ -541,27 +540,6 @@ a {
   font-family: "Segoe UI", Tahoma, Arial, sans-serif;
   font-size: 1rem;
   scroll-behavior: auto;
-  scrollbar-color: rgba(225, 233, 245, 0.82) rgba(8, 16, 28, 0.84);
-  scrollbar-gutter: stable;
-  scrollbar-width: auto;
-}
-
-.teleprompter-display::-webkit-scrollbar {
-  width: 0.95rem;
-}
-
-.teleprompter-display::-webkit-scrollbar-track {
-  background: rgba(8, 16, 28, 0.84);
-}
-
-.teleprompter-display::-webkit-scrollbar-thumb {
-  background: rgba(225, 233, 245, 0.82);
-  border: 0.22rem solid rgba(8, 16, 28, 0.84);
-  border-radius: 999px;
-}
-
-.teleprompter-display::-webkit-scrollbar-thumb:hover {
-  background: #ffffff;
 }
 
 .teleprompter-copy {
