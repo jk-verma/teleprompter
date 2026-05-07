@@ -14,6 +14,7 @@
 html,
 body,
 #root {
+  height: 100%;
   min-height: 100%;
   margin: 0;
 }
@@ -31,7 +32,7 @@ body {
     linear-gradient(160deg, var(--bg-1), var(--bg-2) 54%, var(--bg-3));
   color: var(--text-main);
   overflow-x: hidden;
-  overflow-y: auto;
+  overflow-y: hidden;
 }
 
 a {
@@ -41,14 +42,18 @@ a {
 .app-shell {
   min-height: 100vh;
   min-height: 100dvh;
+  height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .app-shell-app {
   min-height: 100vh;
   min-height: 100dvh;
-  height: auto;
+  height: 100vh;
+  height: 100dvh;
 }
 
 .page-content {
@@ -56,6 +61,7 @@ a {
   min-height: 0;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .site-header {
@@ -483,7 +489,7 @@ a {
 
 .teleprompter-page {
   min-height: 0;
-  height: auto;
+  height: 100%;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -494,7 +500,7 @@ a {
 .teleprompter-workspace {
   flex: 1;
   min-height: 0;
-  height: auto;
+  height: 100%;
   margin: 0 0.22rem 0.22rem;
   border: 1px solid rgba(125, 155, 193, 0.22);
   border-radius: 0.35rem;
@@ -503,9 +509,17 @@ a {
   box-sizing: border-box;
 }
 
+.content-area {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+
 .content {
   width: 100%;
-  height: 100%;
+  height: auto;
+  min-height: 0;
+  flex: 1;
   box-sizing: border-box;
   border: none;
   outline: none;
@@ -513,7 +527,6 @@ a {
   background: inherit;
   line-height: 1.55;
   font-weight: 400;
-  min-height: clamp(24rem, calc(100dvh - 7.5rem), 100dvh);
 }
 
 .is-toolbar-hidden .teleprompter-page {
@@ -525,7 +538,7 @@ a {
 }
 
 .is-toolbar-hidden .content {
-  min-height: calc(100dvh - 0.5rem);
+  min-height: 0;
 }
 
 .teleprompter-display {
@@ -689,20 +702,18 @@ a {
     min-height: 0;
   }
 
-  .content {
-    min-height: clamp(24rem, calc(100dvh - 10.5rem), 100dvh);
-  }
 }
 
 @media (max-width: 760px) {
   body {
-    overflow: auto;
+    overflow: hidden;
   }
 
   .app-shell-app {
     min-height: 100vh;
     min-height: 100dvh;
-    height: auto;
+    height: 100vh;
+    height: 100dvh;
   }
 
   .site-header {
@@ -815,9 +826,6 @@ a {
     padding: 0.75rem 0.72rem 1rem;
   }
 
-  .content {
-    min-height: clamp(24rem, calc(100dvh - 11.5rem), 100dvh);
-  }
 }
 
 @media (max-width: 480px) {
@@ -920,6 +928,5 @@ a {
 
   .content {
     line-height: 1.45;
-    min-height: clamp(24rem, calc(100dvh - 12rem), 100dvh);
   }
 }
