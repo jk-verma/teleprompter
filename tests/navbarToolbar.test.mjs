@@ -98,7 +98,9 @@ test("toolbar header can be hidden and restored", () => {
   assert.match(appSource, /data-testid="toolbar-show"/);
   assert.match(appSource, /hidden=\{isToolbarHidden\}/);
   assert.match(stylesSource, /\.site-header\[hidden\]\s*\{[\s\S]*display:\s*none;/);
-  assert.match(stylesSource, /\.toolbar-visibility-button\s*\{[\s\S]*min-width:\s*7\.35rem;/);
+  assert.match(stylesSource, /\.toolbar-visibility-button\s*\{[\s\S]*left:\s*50%;/);
+  assert.match(stylesSource, /\.toolbar-visibility-button\s*\{[\s\S]*bottom:\s*-0\.88rem;/);
+  assert.match(stylesSource, /\.toolbar-visibility-button\s*\{[\s\S]*transform:\s*translateX\(-50%\);/);
   assert.match(stylesSource, /\.toolbar-restore-button\s*\{[\s\S]*position:\s*fixed;/);
   assert.match(stylesSource, /\.is-toolbar-hidden \.content\s*\{[\s\S]*min-height:\s*calc\(100dvh - 0\.5rem\);/);
 });

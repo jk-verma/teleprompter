@@ -262,20 +262,6 @@ const App = () => {
             />
           ) : null}
 
-          <button
-            type="button"
-            className="toolbar-visibility-button"
-            onClick={() => setIsToolbarHidden(true)}
-            title="Hide toolbar header"
-            aria-label="Hide toolbar header"
-            data-testid="toolbar-hide"
-          >
-            <span className="icon is-small" aria-hidden="true">
-              <i className="fa-solid fa-chevron-up" />
-            </span>
-            <span>Hide Toolbar</span>
-          </button>
-
           <a
             className="support-link"
             href="https://github.com/sponsors/jk-verma"
@@ -289,6 +275,20 @@ const App = () => {
             <span>Support the Project</span>
           </a>
         </div>
+
+        <button
+          type="button"
+          className="toolbar-visibility-button"
+          onClick={() => setIsToolbarHidden(true)}
+          title="Hide toolbar header"
+          aria-label="Hide toolbar header"
+          data-testid="toolbar-hide"
+        >
+          <span className="icon is-small" aria-hidden="true">
+            <i className="fa-solid fa-chevron-up" />
+          </span>
+          <span>Hide Toolbar</span>
+        </button>
       </header>
 
       {isToolbarHidden ? (
