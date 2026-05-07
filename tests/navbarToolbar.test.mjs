@@ -50,6 +50,11 @@ test("return to beginning invalidates pending playback frames", () => {
   assert.match(contentSource, /const scrollToStart = \(\) =>/);
   assert.match(contentSource, /container\.scrollTop = 0;/);
   assert.match(contentSource, /container\.scrollLeft = 0;/);
+  assert.match(contentSource, /let ancestor = container\.parentElement;/);
+  assert.match(contentSource, /ancestor\.scrollTop = 0;/);
+  assert.match(contentSource, /const getPlaybackScrollTarget = \(\) =>/);
+  assert.match(contentSource, /container\.scrollHeight > container\.clientHeight \+ 1/);
+  assert.match(contentSource, /scrollTarget\.scrollTop = playbackOffsetRef\.current;/);
   assert.match(contentSource, /scrollingElement/);
   assert.match(contentSource, /win\?\.scrollTo\?\.\(0, 0\);/);
   assert.match(contentSource, /range\.collapse\(true\);/);
