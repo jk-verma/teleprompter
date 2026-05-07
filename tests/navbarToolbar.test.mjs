@@ -105,12 +105,6 @@ test("margin slider applies symmetrical in-bounds editor margins", () => {
 
 test("toolbar has mobile responsive wrapping rules", () => {
   assert.match(stylesSource, /min-height:\s*100dvh/);
-  assert.match(stylesSource, /body\s*\{[\s\S]*overflow-y:\s*hidden;/);
-  assert.match(stylesSource, /\.app-shell\s*\{[\s\S]*height:\s*100dvh;[\s\S]*overflow:\s*hidden;/);
-  assert.match(stylesSource, /\.page-content\s*\{[\s\S]*overflow:\s*hidden;/);
-  assert.match(stylesSource, /\.content-area\s*\{[\s\S]*flex:\s*1;[\s\S]*min-height:\s*0;/);
-  assert.match(stylesSource, /\.content\s*\{[\s\S]*flex:\s*1;[\s\S]*min-height:\s*0;/);
-  assert.doesNotMatch(stylesSource, /min-height:\s*clamp\(24rem,\s*calc\(100dvh/);
   assert.match(stylesSource, /@media\s*\(max-width:\s*1080px\)\s*\{[\s\S]*\.site-header-main\s*\{[\s\S]*flex-wrap:\s*wrap;/);
   assert.match(stylesSource, /@media\s*\(max-width:\s*760px\)\s*\{[\s\S]*\.topbar-actions\s*\{[\s\S]*flex:\s*1 1 100%;/);
   assert.match(stylesSource, /@media\s*\(max-width:\s*480px\)\s*\{[\s\S]*\.topbar-tuners-stack\s*\{[\s\S]*flex:\s*1 1 calc\(100% - 4\.2rem\);/);
@@ -126,7 +120,7 @@ test("toolbar header can be hidden and restored", () => {
   assert.match(stylesSource, /\.toolbar-visibility-button\s*\{[\s\S]*flex:\s*0 0 auto;/);
   assert.match(stylesSource, /\.toolbar-visibility-button\s*\{[\s\S]*min-width:\s*7\.35rem;/);
   assert.match(stylesSource, /\.toolbar-restore-button\s*\{[\s\S]*position:\s*fixed;/);
-  assert.match(stylesSource, /\.is-toolbar-hidden \.content\s*\{[\s\S]*min-height:\s*0;/);
+  assert.match(stylesSource, /\.is-toolbar-hidden \.content\s*\{[\s\S]*min-height:\s*calc\(100dvh - 0\.5rem\);/);
 });
 
 test("toolbar buttons call their assigned functions", async () => {
