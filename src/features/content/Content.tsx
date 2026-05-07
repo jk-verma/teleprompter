@@ -102,13 +102,6 @@ export const Content = forwardRef<ContentHandle, ContentProps>(function Content(
     if (container) {
       container.scrollTop = 0;
       container.scrollLeft = 0;
-
-      let ancestor = container.parentElement;
-      while (ancestor && ancestor !== body) {
-        ancestor.scrollTop = 0;
-        ancestor.scrollLeft = 0;
-        ancestor = ancestor.parentElement;
-      }
     }
 
     for (const element of [scrollingElement, documentElement, body]) {
@@ -123,23 +116,6 @@ export const Content = forwardRef<ContentHandle, ContentProps>(function Content(
     } catch {
       // Some embedded browsers expose scrollTo but do not implement it.
     }
-  };
-
-  const getPlaybackScrollTarget = () => {
-    const container = containerRef.current;
-    const documentElement = container?.ownerDocument.documentElement;
-    const scrollingElement = container?.ownerDocument.scrollingElement;
-    const body = container?.ownerDocument.body;
-
-    if (!container) {
-      return null;
-    }
-
-    if (container.scrollHeight > container.clientHeight + 1) {
-      return container;
-    }
-
-    return scrollingElement ?? documentElement ?? body ?? container;
   };
 
   const resetVisualPosition = (shouldMoveCaret = false) => {
@@ -618,17 +594,16 @@ export const Content = forwardRef<ContentHandle, ContentProps>(function Content(
     }
 
     const playbackRun = (playbackRunRef.current += 1);
-    const initialScrollTarget = getPlaybackScrollTarget();
-    playbackOffsetRef.current = Math.max(initialScrollTarget?.scrollTop ?? 0, 0);
+    playbackOffsetRef.current = Math.max(playbackOffsetRef.current, 0);
 
     const animate = (timestamp: number) => {
       if (playbackRun !== playbackRunRef.current) {
         return;
       }
 
-      const scrollTarget = getPlaybackScrollTarget();
+      const currentContainer = containerRef.current;
 
-      if (!scrollTarget) {
+      if (!currentContainer) {
         return;
       }
 
@@ -642,7 +617,7 @@ export const Content = forwardRef<ContentHandle, ContentProps>(function Content(
       const pixelsPerSecond = Math.max(18, settings.speed * 2.2);
       playbackOffsetRef.current += elapsedSeconds * pixelsPerSecond;
 
-      scrollTarget.scrollTop = playbackOffsetRef.current;
+      currentContainer.scrollTop = playbackOffsetRef.current;
 
       animationFrameRef.current = requestAnimationFrame(animate);
     };
