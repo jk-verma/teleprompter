@@ -26,6 +26,7 @@ export const TeleprompterPage = forwardRef<
     <main className="teleprompter-page">
       <section className="teleprompter-workspace">
         <Content
+          key={resetSignal}
           ref={ref}
           status={status}
           scriptHtml={scriptHtml}

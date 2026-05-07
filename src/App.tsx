@@ -65,6 +65,7 @@ const App = () => {
   );
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isMicActive, setIsMicActive] = useState(false);
+  const [isToolbarHidden, setIsToolbarHidden] = useState(false);
   const [resetSignal, setResetSignal] = useState(0);
   const [syncSignal, setSyncSignal] = useState(0);
 
@@ -219,8 +220,10 @@ const App = () => {
   };
 
   return (
-    <div className="app-shell app-shell-app">
-      <header className="site-header">
+    <div
+      className={`app-shell app-shell-app ${isToolbarHidden ? "is-toolbar-hidden" : ""}`}
+    >
+      <header className="site-header" hidden={isToolbarHidden}>
         <div className="site-header-main">
           <div className="site-brand-row">
             <a className="site-brand" href="#/" aria-label="TelePrompter home">
@@ -259,6 +262,20 @@ const App = () => {
             />
           ) : null}
 
+          <button
+            type="button"
+            className="toolbar-visibility-button"
+            onClick={() => setIsToolbarHidden(true)}
+            title="Hide toolbar header"
+            aria-label="Hide toolbar header"
+            data-testid="toolbar-hide"
+          >
+            <span className="icon is-small" aria-hidden="true">
+              <i className="fa-solid fa-chevron-up" />
+            </span>
+            <span>Hide Toolbar</span>
+          </button>
+
           <a
             className="support-link"
             href="https://github.com/sponsors/jk-verma"
@@ -273,6 +290,22 @@ const App = () => {
           </a>
         </div>
       </header>
+
+      {isToolbarHidden ? (
+        <button
+          type="button"
+          className="toolbar-restore-button"
+          onClick={() => setIsToolbarHidden(false)}
+          title="Show toolbar header"
+          aria-label="Show toolbar header"
+          data-testid="toolbar-show"
+        >
+          <span className="icon is-small" aria-hidden="true">
+            <i className="fa-solid fa-chevron-down" />
+          </span>
+          <span>Toolbar</span>
+        </button>
+      ) : null}
 
       <div className="page-content">
         {route === "readme" ? (

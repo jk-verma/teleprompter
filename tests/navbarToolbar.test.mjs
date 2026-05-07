@@ -12,8 +12,13 @@ const navbarSource = readFileSync(
   new URL("../src/features/navbar/NavBar.tsx", import.meta.url),
   "utf8",
 );
+const appSource = readFileSync(new URL("../src/App.tsx", import.meta.url), "utf8");
 const contentSource = readFileSync(
   new URL("../src/features/content/Content.tsx", import.meta.url),
+  "utf8",
+);
+const teleprompterPageSource = readFileSync(
+  new URL("../src/features/teleprompter/TeleprompterPage.tsx", import.meta.url),
   "utf8",
 );
 const stylesSource = readFileSync(
@@ -36,6 +41,30 @@ test("toolbar buttons are wired to active handlers", () => {
   for (const handler of requiredHandlers) {
     assert.match(navbarSource, new RegExp(handler.replace(/[{}]/g, "\\$&")));
   }
+});
+
+test("return to beginning invalidates pending playback frames", () => {
+  assert.match(contentSource, /const playbackRunRef = useRef\(0\)/);
+  assert.match(contentSource, /playbackRunRef\.current \+= 1;/);
+  assert.match(contentSource, /const playbackRun = \(playbackRunRef\.current \+= 1\);/);
+  assert.match(contentSource, /playbackRun !== playbackRunRef\.current/);
+  assert.match(contentSource, /editor\.style\.top = "0px";/);
+  assert.match(contentSource, /const moveCaretToEditorStart = \(\) =>/);
+  assert.match(contentSource, /const scrollContainerToBeginning = \(\) =>/);
+  assert.match(contentSource, /const scrollPageToBeginning = \(\) =>/);
+  assert.match(contentSource, /const scrollEverythingToBeginning = \(\) =>/);
+  assert.match(contentSource, /container\.scrollTop = 0;/);
+  assert.match(contentSource, /container\.scrollLeft = 0;/);
+  assert.match(contentSource, /ownerDocument\.scrollingElement/);
+  assert.match(contentSource, /ownerDocument\.documentElement/);
+  assert.match(contentSource, /ownerDocument\.body/);
+  assert.match(contentSource, /win\.scrollTo\(0, 0\);/);
+  assert.doesNotMatch(contentSource, /containerRef\.current\?\.scrollTo/);
+  assert.match(contentSource, /range\.collapse\(true\);/);
+  assert.match(contentSource, /const resetToBeginning = \(\) =>/);
+  assert.match(contentSource, /resetVisualPosition\(true\);/);
+  assert.doesNotMatch(contentSource, /requestAnimationFrame\(\(\) => \{[\s\S]*resetVisualPosition\(true\);/);
+  assert.match(teleprompterPageSource, /key=\{resetSignal\}/);
 });
 
 test("alignment popover buttons are wired to alignment commands", () => {
@@ -88,6 +117,19 @@ test("toolbar has mobile responsive wrapping rules", () => {
   assert.match(stylesSource, /@media\s*\(max-width:\s*1080px\)\s*\{[\s\S]*\.site-header-main\s*\{[\s\S]*flex-wrap:\s*wrap;/);
   assert.match(stylesSource, /@media\s*\(max-width:\s*760px\)\s*\{[\s\S]*\.topbar-actions\s*\{[\s\S]*flex:\s*1 1 100%;/);
   assert.match(stylesSource, /@media\s*\(max-width:\s*480px\)\s*\{[\s\S]*\.topbar-tuners-stack\s*\{[\s\S]*flex:\s*1 1 calc\(100% - 4\.2rem\);/);
+});
+
+test("toolbar header can be hidden and restored", () => {
+  assert.match(appSource, /isToolbarHidden/);
+  assert.match(appSource, /data-testid="toolbar-hide"/);
+  assert.match(appSource, />Hide Toolbar</);
+  assert.match(appSource, /data-testid="toolbar-show"/);
+  assert.match(appSource, /hidden=\{isToolbarHidden\}/);
+  assert.match(stylesSource, /\.site-header\[hidden\]\s*\{[\s\S]*display:\s*none;/);
+  assert.match(stylesSource, /\.toolbar-visibility-button\s*\{[\s\S]*flex:\s*0 0 auto;/);
+  assert.match(stylesSource, /\.toolbar-visibility-button\s*\{[\s\S]*min-width:\s*7\.35rem;/);
+  assert.match(stylesSource, /\.toolbar-restore-button\s*\{[\s\S]*position:\s*fixed;/);
+  assert.match(stylesSource, /\.is-toolbar-hidden \.content\s*\{[\s\S]*min-height:\s*calc\(100dvh - 0\.5rem\);/);
 });
 
 test("toolbar buttons call their assigned functions", async () => {

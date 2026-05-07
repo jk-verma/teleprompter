@@ -64,6 +64,7 @@ export const Content = forwardRef<ContentHandle, ContentProps>(function Content(
 ) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const animationFrameRef = useRef<number | null>(null);
+  const playbackRunRef = useRef(0);
   const frameTimeRef = useRef<number | null>(null);
   const playbackOffsetRef = useRef(0);
   const editorRef = useRef<HTMLDivElement | null>(null);
@@ -76,7 +77,24 @@ export const Content = forwardRef<ContentHandle, ContentProps>(function Content(
   const speechResultIndexRef = useRef(0);
   const isSpeechActiveRef = useRef(false);
 
-  const resetVisualPosition = () => {
+  const moveCaretToEditorStart = () => {
+    const editor = editorRef.current;
+    const selection = editor?.ownerDocument.getSelection();
+    if (!editor || !selection) {
+      return;
+    }
+
+    const range = editor.ownerDocument.createRange();
+    range.selectNodeContents(editor);
+    range.collapse(true);
+    selection.removeAllRanges();
+    selection.addRange(range);
+    savedSelectionRangeRef.current = range.cloneRange();
+  };
+
+  const resetVisualPosition = (shouldMoveCaret = false) => {
+    playbackRunRef.current += 1;
+
     if (animationFrameRef.current !== null) {
       cancelAnimationFrame(animationFrameRef.current);
       animationFrameRef.current = null;
@@ -96,10 +114,67 @@ export const Content = forwardRef<ContentHandle, ContentProps>(function Content(
 
     if (editor) {
       editor.style.transform = "";
-      editor.style.top = "";
-      editor.style.position = "";
+      editor.style.top = "0px";
+      editor.style.position = "relative";
       editor.style.willChange = "";
     }
+
+    if (shouldMoveCaret) {
+      moveCaretToEditorStart();
+    }
+  };
+
+  const scrollContainerToBeginning = () => {
+    const container = containerRef.current;
+    if (!container) {
+      return;
+    }
+
+    container.scrollTop = 0;
+    container.scrollLeft = 0;
+  };
+
+  const scrollPageToBeginning = () => {
+    const container = containerRef.current;
+    const ownerDocument = container?.ownerDocument;
+    if (!ownerDocument) {
+      return;
+    }
+
+    const scrollTargets = [
+      ownerDocument.scrollingElement,
+      ownerDocument.documentElement,
+      ownerDocument.body,
+    ];
+
+    for (const target of scrollTargets) {
+      if (!target) {
+        continue;
+      }
+
+      target.scrollTop = 0;
+      target.scrollLeft = 0;
+    }
+
+    const win = ownerDocument.defaultView;
+    if (win) {
+      try {
+        win.scrollTo(0, 0);
+      } catch {
+        // Embedded DOMs can expose scrollTo without implementing it.
+      }
+    }
+  };
+
+  const scrollEverythingToBeginning = () => {
+    scrollContainerToBeginning();
+    scrollPageToBeginning();
+  };
+
+  const resetToBeginning = () => {
+    stopSpeech();
+    resetVisualPosition(true);
+    scrollEverythingToBeginning();
   };
 
   const getPlainEditorHtml = () => {
@@ -533,10 +608,15 @@ export const Content = forwardRef<ContentHandle, ContentProps>(function Content(
       return;
     }
 
+    const playbackRun = (playbackRunRef.current += 1);
     playbackOffsetRef.current = Math.max(playbackOffsetRef.current, 0);
     editor.style.willChange = "top";
 
     const animate = (timestamp: number) => {
+      if (playbackRun !== playbackRunRef.current) {
+        return;
+      }
+
       const currentContainer = containerRef.current;
       const currentEditor = editorRef.current;
 
@@ -568,6 +648,7 @@ export const Content = forwardRef<ContentHandle, ContentProps>(function Content(
         cancelAnimationFrame(animationFrameRef.current);
         animationFrameRef.current = null;
       }
+      playbackRunRef.current += 1;
       frameTimeRef.current = null;
       if (editor) {
         editor.style.willChange = "";
@@ -677,16 +758,7 @@ export const Content = forwardRef<ContentHandle, ContentProps>(function Content(
       snapshotSelection();
     },
     resetPosition() {
-      const container = containerRef.current;
-      const editor = editorRef.current;
-      stopSpeech();
-      resetVisualPosition();
-      requestAnimationFrame(resetVisualPosition);
-
-      if (editor) {
-        editor.scrollIntoView({ block: "start", inline: "nearest" });
-      }
-      container?.scrollTo({ top: 0, left: 0, behavior: "auto" });
+      resetToBeginning();
     },
     stopSpeech() {
       stopSpeech();
