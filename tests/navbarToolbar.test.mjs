@@ -44,11 +44,14 @@ test("return to beginning invalidates pending playback frames", () => {
   assert.match(contentSource, /playbackRunRef\.current \+= 1;/);
   assert.match(contentSource, /const playbackRun = \(playbackRunRef\.current \+= 1\);/);
   assert.match(contentSource, /playbackRun !== playbackRunRef\.current/);
-  assert.match(contentSource, /editor\.style\.top = "0px";/);
+  assert.match(contentSource, /editor\.style\.top = "";/);
+  assert.doesNotMatch(contentSource, /currentEditor\.style\.top = `-\$\{playbackOffsetRef\.current\}px`;/);
   assert.match(contentSource, /const moveCaretToEditorStart = \(\) =>/);
-  assert.match(contentSource, /const scrollContainerToStart = \(\) =>/);
+  assert.match(contentSource, /const scrollToStart = \(\) =>/);
   assert.match(contentSource, /container\.scrollTop = 0;/);
   assert.match(contentSource, /container\.scrollLeft = 0;/);
+  assert.match(contentSource, /scrollingElement/);
+  assert.match(contentSource, /win\?\.scrollTo\?\.\(0, 0\);/);
   assert.match(contentSource, /range\.collapse\(true\);/);
   assert.match(contentSource, /const resetToBeginning = \(\) =>/);
   assert.match(contentSource, /resetVisualPosition\(true\);/);
