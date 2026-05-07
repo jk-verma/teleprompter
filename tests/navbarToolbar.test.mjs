@@ -45,6 +45,11 @@ test("return to beginning invalidates pending playback frames", () => {
   assert.match(contentSource, /const playbackRun = \(playbackRunRef\.current \+= 1\);/);
   assert.match(contentSource, /playbackRun !== playbackRunRef\.current/);
   assert.match(contentSource, /editor\.style\.top = "0px";/);
+  assert.match(contentSource, /const moveCaretToEditorStart = \(\) =>/);
+  assert.match(contentSource, /range\.collapse\(true\);/);
+  assert.match(contentSource, /const resetToBeginning = \(\) =>/);
+  assert.match(contentSource, /resetVisualPosition\(true\);/);
+  assert.match(contentSource, /requestAnimationFrame\(\(\) => \{[\s\S]*requestAnimationFrame\(\(\) => \{/);
 });
 
 test("alignment popover buttons are wired to alignment commands", () => {

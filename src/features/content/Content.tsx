@@ -77,7 +77,22 @@ export const Content = forwardRef<ContentHandle, ContentProps>(function Content(
   const speechResultIndexRef = useRef(0);
   const isSpeechActiveRef = useRef(false);
 
-  const resetVisualPosition = () => {
+  const moveCaretToEditorStart = () => {
+    const editor = editorRef.current;
+    const selection = editor?.ownerDocument.getSelection();
+    if (!editor || !selection) {
+      return;
+    }
+
+    const range = editor.ownerDocument.createRange();
+    range.selectNodeContents(editor);
+    range.collapse(true);
+    selection.removeAllRanges();
+    selection.addRange(range);
+    savedSelectionRangeRef.current = range.cloneRange();
+  };
+
+  const resetVisualPosition = (shouldMoveCaret = false) => {
     playbackRunRef.current += 1;
 
     if (animationFrameRef.current !== null) {
@@ -103,6 +118,28 @@ export const Content = forwardRef<ContentHandle, ContentProps>(function Content(
       editor.style.position = "relative";
       editor.style.willChange = "";
     }
+
+    if (shouldMoveCaret) {
+      moveCaretToEditorStart();
+    }
+  };
+
+  const resetToBeginning = () => {
+    const container = containerRef.current;
+
+    stopSpeech();
+    resetVisualPosition(true);
+    container?.scrollTo({ top: 0, left: 0, behavior: "auto" });
+
+    requestAnimationFrame(() => {
+      resetVisualPosition(true);
+      containerRef.current?.scrollTo({ top: 0, left: 0, behavior: "auto" });
+
+      requestAnimationFrame(() => {
+        resetVisualPosition(true);
+        containerRef.current?.scrollTo({ top: 0, left: 0, behavior: "auto" });
+      });
+    });
   };
 
   const getPlainEditorHtml = () => {
@@ -686,16 +723,7 @@ export const Content = forwardRef<ContentHandle, ContentProps>(function Content(
       snapshotSelection();
     },
     resetPosition() {
-      const container = containerRef.current;
-      const editor = editorRef.current;
-      stopSpeech();
-      resetVisualPosition();
-      requestAnimationFrame(resetVisualPosition);
-
-      if (editor) {
-        editor.scrollIntoView({ block: "start", inline: "nearest" });
-      }
-      container?.scrollTo({ top: 0, left: 0, behavior: "auto" });
+      resetToBeginning();
     },
     stopSpeech() {
       stopSpeech();
