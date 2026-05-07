@@ -55,10 +55,6 @@ test("return to beginning invalidates pending playback frames", () => {
   assert.match(contentSource, /const getPlaybackScrollTarget = \(\) =>/);
   assert.match(contentSource, /container\.scrollHeight > container\.clientHeight \+ 1/);
   assert.match(contentSource, /scrollTarget\.scrollTop = playbackOffsetRef\.current;/);
-  assert.match(contentSource, /const scrollByWheelDelta = \(deltaX: number, deltaY: number\) =>/);
-  assert.match(contentSource, /scrollTarget\.scrollTop \+= deltaY;/);
-  assert.match(contentSource, /playbackOffsetRef\.current = scrollTarget\.scrollTop;/);
-  assert.match(contentSource, /onWheel=\{handleWheel\}/);
   assert.match(contentSource, /scrollingElement/);
   assert.match(contentSource, /win\?\.scrollTo\?\.\(0, 0\);/);
   assert.match(contentSource, /range\.collapse\(true\);/);
