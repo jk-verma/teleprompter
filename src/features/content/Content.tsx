@@ -124,20 +124,28 @@ export const Content = forwardRef<ContentHandle, ContentProps>(function Content(
     }
   };
 
-  const resetToBeginning = () => {
+  const scrollContainerToBeginning = () => {
     const container = containerRef.current;
+    if (!container) {
+      return;
+    }
 
+    container.scrollTop = 0;
+    container.scrollLeft = 0;
+  };
+
+  const resetToBeginning = () => {
     stopSpeech();
     resetVisualPosition(true);
-    container?.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    scrollContainerToBeginning();
 
     requestAnimationFrame(() => {
       resetVisualPosition(true);
-      containerRef.current?.scrollTo({ top: 0, left: 0, behavior: "auto" });
+      scrollContainerToBeginning();
 
       requestAnimationFrame(() => {
         resetVisualPosition(true);
-        containerRef.current?.scrollTo({ top: 0, left: 0, behavior: "auto" });
+        scrollContainerToBeginning();
       });
     });
   };
