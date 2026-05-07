@@ -92,16 +92,6 @@ export const Content = forwardRef<ContentHandle, ContentProps>(function Content(
     savedSelectionRangeRef.current = range.cloneRange();
   };
 
-  const scrollContainerToStart = () => {
-    const container = containerRef.current;
-    if (!container) {
-      return;
-    }
-
-    container.scrollTop = 0;
-    container.scrollLeft = 0;
-  };
-
   const resetVisualPosition = (shouldMoveCaret = false) => {
     playbackRunRef.current += 1;
 
@@ -117,7 +107,10 @@ export const Content = forwardRef<ContentHandle, ContentProps>(function Content(
     frameTimeRef.current = null;
     savedSelectionRangeRef.current = null;
 
-    scrollContainerToStart();
+    if (container) {
+      container.scrollTop = 0;
+      container.scrollLeft = 0;
+    }
 
     if (editor) {
       editor.style.transform = "";
@@ -132,17 +125,19 @@ export const Content = forwardRef<ContentHandle, ContentProps>(function Content(
   };
 
   const resetToBeginning = () => {
+    const container = containerRef.current;
+
     stopSpeech();
     resetVisualPosition(true);
-    scrollContainerToStart();
+    container?.scrollTo({ top: 0, left: 0, behavior: "auto" });
 
     requestAnimationFrame(() => {
       resetVisualPosition(true);
-      scrollContainerToStart();
+      containerRef.current?.scrollTo({ top: 0, left: 0, behavior: "auto" });
 
       requestAnimationFrame(() => {
         resetVisualPosition(true);
-        scrollContainerToStart();
+        containerRef.current?.scrollTo({ top: 0, left: 0, behavior: "auto" });
       });
     });
   };
